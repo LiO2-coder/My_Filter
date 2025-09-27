@@ -4,13 +4,16 @@
 ## 项目结构
 
 ```
-MyFilter/
-├── EWMAFilter.py          # 指数加权移动平均滤波器
-├── KalmanFilter.py        # 卡尔曼滤波器
-├── SWMFilter.py           # 滑动窗口均值滤波器
-├── __init__.py            # 包初始化文件
-├── requirements.txt       # 依赖包列表
-└── README.md             # 项目说明文档
+main/
+├── MyFilter/                    # 主包目录
+│   ├── EWMAFilter.py           # 指数加权移动平均滤波器
+│   ├── KalmanFilter.py         # 卡尔曼滤波器
+│   ├── SWMFilter.py            # 滑动窗口均值滤波器
+│   └── __init__.py             # 包初始化文件
+├── LICENSE                     # 许可证文件
+├── README.md                   # 项目说明文档
+├── fileList.txt                # 文件列表
+└── requirements.txt            # 依赖包列表
 ```
 
 ## 特性
