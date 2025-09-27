@@ -4,5 +4,5 @@
 # author_email="2099602919@qq.com",
 # description="this is a filter package include EWMAFilter, KalmanFilter, SWMFilter,
 # long_description="you can use this package to filter one dimensional data, such as mouse position, temperature, etc"
-# url="https://github.com/LiO2/MyFilter",
+# url="https://github.com/LiO2-coder/My_Filter",
 # how_to_use="from MyFilter import EWMAFilter.EWMAFilter"
