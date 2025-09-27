@@ -178,7 +178,7 @@ KalmanFilter(x, A=1, B=None, H=1, Q=0.1, R=1, P=1)
 ## 作者
 
 - **LiO2** - [2099602919@qq.com](mailto:2099602919@qq.com)
-- **GitHub**: [https://github.com/LiO2](https://github.com/LiO2-coder)
+- **GitHub**: [https://github.com/LiO2-coder](https://github.com/LiO2-coder)
 
 ## 版本历史
 
