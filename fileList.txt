@@ -1,0 +1,10 @@
+main
+├── MyFilter
+│   ├── EWMAFilter.py
+│   ├── KalmanFilter.py
+│   ├── SWMFilter.py
+│   └── __init__.py
+├── LICENSE
+├── README.md
+├── fileList.txt
+└── requirements.txt
