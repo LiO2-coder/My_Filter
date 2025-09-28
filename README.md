@@ -26,8 +26,7 @@ main/
 ## 安装
 
 ```bash
-git clone https://github.com/LiO2-coder
-/MyFilter.git
+git clone https://github.com/LiO2-coder/MyFilter.git
 cd MyFilter
 pip install -r requirements.txt
 ```
