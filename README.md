@@ -5,7 +5,7 @@
 
 ```
 main/
-├── MyFilter/                    # 主包目录
+├── MyFilter/                   # 主包目录
 │   ├── EWMAFilter.py           # 指数加权移动平均滤波器
 │   ├── KalmanFilter.py         # 卡尔曼滤波器
 │   ├── SWMFilter.py            # 滑动窗口均值滤波器
