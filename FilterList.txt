@@ -1,0 +1,24 @@
+main
+├── MyFilter
+│   ├── ButterworthFilter.py
+│   ├── ClampFilter.py
+│   ├── ComplementaryFilter.py
+│   ├── EKalmanFilter.py
+│   ├── EWMAFilter.py
+│   ├── GaussianFilter.py
+│   ├── HysteresisFilter.py
+│   ├── KalmanFilter.py
+│   ├── MeanFilter.py
+│   ├── MedianFilter.py
+│   ├── ParticleFilter.py
+│   ├── SWMFilter.py
+│   ├── TMFilter.py
+│   ├── UKalmanFilter.py
+│   └── __init__.py
+├── examples
+│   ├── demo_all_filters.py
+│   └── plot_filter_groups.py
+├── LICENSE
+├── README.md
+├── FilterList.txt
+└── requirements.txt

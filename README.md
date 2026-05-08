@@ -1,172 +1,187 @@
-# MyFilter - 轻量级滤波器库
-一个简单易用的 Python 滤波器库，包含多种常用的一维数据滤波算法。
+# EasyFilter - 轻量级一维滤波器库
+
+[English Version](./README_en.md)
+
+`EasyFilter` 是一个简单易用的滤波器库，面向一维标量数据的平滑、抗噪与状态估计。
+
+当前版本提供 14 个滤波器，统一接口风格，适合快速实验和工程落地。
 
 ## 项目结构
 
-```
+```text
 main/
-├── MyFilter/                   # 主包目录
-│   ├── EWMAFilter.py           # 指数加权移动平均滤波器
-│   ├── KalmanFilter.py         # 卡尔曼滤波器
-│   ├── SWMFilter.py            # 滑动窗口均值滤波器
-│   └── __init__.py             # 包初始化文件
-├── LICENSE                     # 许可证文件
-├── README.md                   # 项目说明文档
-├── fileList.txt                # 文件列表
-└── requirements.txt            # 依赖包列表
+├── MyFilter/
+│   ├── ButterworthFilter.py
+│   ├── ClampFilter.py
+│   ├── ComplementaryFilter.py
+│   ├── EKalmanFilter.py
+│   ├── EWMAFilter.py
+│   ├── GaussianFilter.py
+│   ├── HysteresisFilter.py
+│   ├── KalmanFilter.py
+│   ├── MeanFilter.py
+│   ├── MedianFilter.py
+│   ├── ParticleFilter.py
+│   ├── SWMFilter.py
+│   ├── TMFilter.py
+│   ├── UKalmanFilter.py
+│   └── __init__.py
+├── examples/
+│   ├── demo_all_filters.py
+│   └── plot_filter_groups.py
+├── LICENSE
+├── README.md
+├── FilterList.txt
+└── requirements.txt
 ```
-
-## 特性
-
-- 🚀 **轻量级**：纯 Python 实现，依赖简单
-- 📦 **开箱即用**：简单的 API 设计，快速上手
-- 🔧 **可扩展**：易于集成到现有项目中
-- 📊 **多种算法**：包含三种常用滤波器
 
 ## 安装
 
 ```bash
-git clone https://github.com/LiO2-coder/MyFilter.git
-cd MyFilter
+git clone https://github.com/LiO2-coder/EasyFilter.git
+cd EasyFilter
 pip install -r requirements.txt
 ```
 
 ## 依赖
 
-- Python 3.6+
+- Python 3.8+
 - numpy>=1.19.0
-
-## 滤波器介绍
-
-### 1. 滑动窗口均值滤波器 (SWMFilter)
-- **原理**：使用固定大小的窗口，计算窗口内数据的算术平均值
-- **适用场景**：数据波动较大，需要平滑处理的场景
-- **参数**：`window_size` - 窗口大小
-
-### 2. 指数加权移动平均滤波器 (EWMAFilter)
-- **原理**：对历史数据赋予指数衰减的权重，新数据权重更高
-- **适用场景**：需要快速响应数据变化，同时保持一定平滑性
-- **参数**：`alpha` - 平滑因子 (0-1)，值越大对新数据响应越快
-
-### 3. 卡尔曼滤波器 (KalmanFilter)
-- **原理**：基于状态空间模型，通过预测和更新两个步骤进行最优估计
-- **适用场景**：系统有明确模型，需要最优估计的场景
-- **参数**：多种状态矩阵参数，可根据系统特性调整
+- scipy>=1.7.0
+- matplotlib>=3.5.0
 
 ## 快速开始
 
-### 基本使用
-
 ```python
 from MyFilter import SWMFilter, EWMAFilter, KalmanFilter
-import numpy as np
 
-# 生成示例数据
-data = np.random.randn(100) + 5  # 带噪声的数据
+swm = SWMFilter(window_size=5)
+print(swm.update(1.2))  # (1.2, False)
 
-# 滑动窗口均值滤波器
-swm_filter = SWMFilter(window_size=5)
-filtered_swm = []
-for value in data:
-    result, is_full = swm_filter.update(value)
-    filtered_swm.append(result)
+ema = EWMAFilter(alpha=0.3)
+print(ema.update(1.2))
 
-# 指数加权移动平均滤波器
-ewma_filter = EWMAFilter(alpha=0.3)
-filtered_ewma = []
-for value in data:
-    result = ewma_filter.update(value)
-    filtered_ewma.append(result)
-
-# 卡尔曼滤波器
-kf = KalmanFilter(x=0, Q=0.1, R=1)  # 初始状态为0
-filtered_kalman = []
-for value in data:
-    kf.update(value)
-    filtered_kalman.append(kf.get_x())
+kf = KalmanFilter(x=0.0, Q=0.1, R=1.0)
+print(kf.update(1.2))
 ```
 
-### 详细示例
+## 滤波器列表
 
-```python
-# 滑动窗口均值滤波器示例
-swm = SWMFilter(window_size=3)
-print("SWMFilter 示例:")
-for i, value in enumerate([1, 2, 3, 4, 5]):
-    filtered, full_window = swm.update(value)
-    print(f"输入: {value}, 输出: {filtered:.2f}, 窗口满: {full_window}")
+### 基础平滑类
 
-# 指数加权移动平均滤波器示例
-ewma = EWMAFilter(alpha=0.5)
-print("\nEWMAFilter 示例:")
-for i, value in enumerate([1, 2, 3, 2, 1]):
-    filtered = ewma.update(value)
-    print(f"输入: {value}, 输出: {filtered:.2f}")
+| 滤波器           | 核心接口                            | 特点                                           | 优点                         | 局限                                     | 典型场景                           | 关键参数建议                                                           |
+| ---------------- | ----------------------------------- | ---------------------------------------------- | ---------------------------- | ---------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------- |
+| `MeanFilter`     | `update(x)`                         | 对历史观测值做累计均值，输出非常平滑的滤波值。 | 实现最简单，适合做长期基线。 | 对新变化响应慢。                         | 长周期温度趋势、慢变量基线估计。   | 需要阶段性重置时可定期调用`reset()`。                                  |
+| `EWMAFilter`     | `update(x)`                         | 指数加权平均，越新的观测值权重越高。           | 在平滑与响应速度之间可调。   | `alpha` 不合适时可能过慢或过抖。         | 实时传感器去抖、价格曲线平滑显示。 | 默认从`alpha=0.2~0.4` 起调；想更快就增大 `alpha`。                     |
+| `SWMFilter`      | `update(x) -> (滤波值, 窗口满标志)` | 固定窗口均值，窗口内观测值等权。               | 平滑稳定，结果直观。         | 窗口过大时滞后明显。                     | 采样频率稳定的一维数据平滑。       | `window_size=3~7` 常用；噪声重时增大窗口。                             |
+| `MedianFilter`   | `update(x) -> (滤波值, 窗口满标志)` | 取窗口中位数，天然抑制孤立异常值。             | 抗脉冲噪声能力强。           | 对连续高斯噪声平滑能力弱于均值类。       | 距离传感器偶发跳点、触控信号毛刺。 | 常用奇数窗口`3/5/7`，窗口越大越稳但更滞后。                            |
+| `TMFilter`       | `update(x) -> (滤波值, 窗口满标志)` | 对窗口排序后去掉两端极值再求均值。             | 在保留趋势的同时抑制极端值。 | 参数约束严格，`trim_size` 过大信息损失。 | 带离群点的工业测量序列。           | 先用`window_size=5, trim_size=1`，并保持 `2*trim_size < window_size`。 |
+| `GaussianFilter` | `update(x) -> (滤波值, 窗口满标志)` | 窗口高斯加权，越近的观测值权重越高。           | 比等权窗口更强调最近状态。   | `sigma` 与窗口搭配不当会退化。           | 平滑且希望保留局部动态细节的曲线。 | 先设`window_size=5`，`sigma` 取 `1.0~1.5` 再微调。                     |
 
-# 卡尔曼滤波器示例
-kf = KalmanFilter(x=0, P=1, Q=0.1, R=1)
-print("\nKalmanFilter 示例:")
-measurements = [1.1, 1.9, 3.2, 4.1, 4.8]
-for i, z in enumerate(measurements):
-    kf.update(z)
-    print(f"观测值: {z:.1f}, 估计值: {kf.get_x():.2f}, 卡尔曼增益: {kf.get_KK():.3f}")
+### 规则/融合类
+
+| 滤波器                | 核心接口                                             | 特点                               | 优点                           | 局限                         | 典型场景                         | 关键参数建议                                |
+| --------------------- | ---------------------------------------------------- | ---------------------------------- | ------------------------------ | ---------------------------- | -------------------------------- | ------------------------------------------- |
+| `ClampFilter`         | `update(x)`                                          | 将观测值限制在上下界内。           | 对超量程值保护直接有效。       | 不是平滑器，只做范围裁剪。   | 传感器保护、输入安全边界控制。   | 先根据物理量程设置`min_value/max_value`。   |
+| `HysteresisFilter`    | `update(x)`                                          | 变化未超过死区时保持上次滤波值。   | 显著减少小抖动触发。           | 死区过大可能吞掉真实小变化。 | 开关阈值判定、UI 数值防抖显示。  | `deadband` 可从噪声峰峰值的 `0.5x` 起试。   |
+| `ComplementaryFilter` | `update(measurement, prediction=None, control=None)` | 融合预测值与观测值输出单一滤波值。 | 可利用模型预测并保持实现轻量。 | 依赖`alpha` 与预测质量。     | IMU 姿态一维融合、简化状态融合。 | `alpha` 先用 `0.9~0.98`；预测不可靠时下调。 |
+
+### 状态估计与频域类
+
+| 滤波器              | 核心接口            | 特点                                           | 优点                             | 局限                           | 典型场景                             | 关键参数建议                                       |
+| ------------------- | ------------------- | ---------------------------------------------- | -------------------------------- | ------------------------------ | ------------------------------------ | -------------------------------------------------- |
+| `ButterworthFilter` | `update(x)`         | 基于 IIR 的流式频域滤波，支持低/高/带通/带阻。 | 频率选择明确，对周期噪声控制好。 | 需合理设置采样频率与截止频率。 | 电信号去工频干扰、低通平滑控制输入。 | 优先确认`fs`；低通通常从较低 `cutoff` 起调。       |
+| `KalmanFilter`      | `update(z, u=None)` | 一维线性状态估计，融合预测与观测值。           | 估计稳定且可解释。               | 需要线性模型假设与噪声参数。   | 匀速或近线性过程的状态估计。         | 先固定`R`，逐步调整 `Q` 控制跟随速度。             |
+| `EKalmanFilter`     | `update(z, u=None)` | 对非线性模型做一阶线性化后估计状态。           | 可处理轻中度非线性系统。         | 线性化误差会影响稳定性。       | 非线性传感器映射、简化动力学估计。   | 先保证`state_func/measure_func` 连续，再调 `Q/R`。 |
+| `UKalmanFilter`     | `update(z, u=None)` | 无需显式雅可比，通过 sigma 点传播非线性。      | 非线性场景下通常比 EKF 更稳健。  | 参数更多，调参成本更高。       | 非线性但维度较低、希望保留精度。     | 常用起点`alpha=1e-3, beta=2, kappa=0`。            |
+| `ParticleFilter`    | `update(z, u=None)` | 用粒子群近似后验分布，适配复杂非高斯噪声。     | 对强非线性、非高斯问题更灵活。   | 计算开销大，粒子数影响明显。   | 多峰噪声、遮挡严重或模型不确定场景。 | 从`num_particles=300~800` 起步，先调噪声尺度。     |
+
+## 如何选择滤波器
+
+### 按噪声类型
+
+- 高频抖动为主：优先 `EWMAFilter`、`SWMFilter`、`GaussianFilter`。
+- 脉冲噪声/离群点明显：优先 `MedianFilter` 或 `TMFilter`，必要时前置 `ClampFilter`。
+- 缓慢漂移且偶发跳变：优先 `EWMAFilter`，对跳变敏感业务可配合 `HysteresisFilter`。
+- 周期性噪声（特定频段）：优先 `ButterworthFilter`（低通或带阻）。
+
+### 按系统约束
+
+- 低算力、强实时：优先 `MeanFilter`、`EWMAFilter`、`ClampFilter`。
+- 有可用过程模型（线性）：优先 `KalmanFilter`。
+- 有可用过程模型（非线性）：优先 `EKalmanFilter` 或 `UKalmanFilter`。
+- 非线性且噪声复杂（非高斯/多峰）：优先 `ParticleFilter`。
+
+### 快速选择（被上面好专业的选择方法吓哭了）
+
+1. 只想快速去抖且实现最轻：先用 `EWMAFilter(alpha=0.3)`，再按响应速度调 `alpha`。
+2. 数据含明显毛刺：先用 `MedianFilter(window_size=5)`，若仍偏抖再加 `EWMAFilter`。
+3. 既要去异常又要保留均值趋势：先用 `TMFilter(window_size=5, trim_size=1)`。
+4. 已知有效量程：先上 `ClampFilter` 做保护，再串联平滑滤波器。
+5. 小波动导致频繁触发：先用 `HysteresisFilter(deadband=噪声幅值)`。
+6. 采样频率明确且有频段目标：优先 `ButterworthFilter`，先确认 `fs` 后调 `cutoff`。
+7. 有状态模型并需要状态估计：先 `KalmanFilter`，再根据非线性程度升级到 `EKalman/UKalman`。
+8. 模型不可靠且噪声分布复杂：先 `ParticleFilter`，逐步增加粒子数观察稳定性与耗时。
+
+## 滤波效果
+
+![基础平滑类](images/Basic_Smoothing_Filters.png "图1：基础平滑类")
+*图1：基础平滑类*
+
+![规则/融合类](images/Rule%26Fusion_Filters.png "图2：规则/融合类")
+*图2：规则/融合类*
+![状态估计与频域类](images/StateEstimation&Frequency_Filters.png "图3：状态估计与频域类")
+*图3：状态估计与频域类*
+
+
+
+## 示例脚本
+
+运行全量示例：
+
+```bash
+python3 examples/demo_all_filters.py
 ```
 
-## API 文档
+示例覆盖：
 
-### SWMFilter 类
+- 平稳信号 + 脉冲噪声 + 缓慢漂移
+- 所有滤波器的最小可运行用法
+- EKalman/UKalman/Particle/Complementary 的可注入模型示例
 
-```python
-SWMFilter(window_size: int = 5)
+运行分组绘图示例：
+
+```bash
+python3 examples/plot_filter_groups.py
 ```
-- `update(new_value)`: 更新滤波器，返回 (滤波值, 窗口是否满)
-- `get_filted()`: 获取当前滤波值
-- `reset()`: 重置滤波器状态
 
-### EWMAFilter 类
+图表说明：
 
-```python
-EWMAFilter(alpha: float = 0.3)
-```
-- `update(new_value)`: 更新滤波器，返回滤波值
-- `get_filted()`: 获取当前滤波值
-- `set_alpha(alpha)`: 设置平滑因子
-- `reset(alpha=None)`: 重置滤波器
+- 使用 `random` 库生成一组随机信号
+- 生成三张折线图，分别对应：
 
-### KalmanFilter 类
+1. 基础平滑类（`MF`, `EWMA`, `SWM`, `MED`, `TM`, `GAU`）
+2. 规则/融合类（`CLP`, `HYS`, `CMP`）
+3. 状态估计与频域类（`BWF`, `KF`, `EKF`, `UKF`, `PF`）
 
-```python
-KalmanFilter(x, A=1, B=None, H=1, Q=0.1, R=1, P=1)
-```
-- `update(z)`: 使用观测值更新滤波器
-- `get_x()`: 获取当前状态估计值
-- `get_KK()`: 获取当前卡尔曼增益
-- `get_P()`: 获取状态估计误差协方差
-- `get_Q()`, `get_R()`: 获取噪声协方差
+- 每张图均包含原始数据 `RAW` 与该组全部滤波器曲线
+- 原始数据统一为红色
 
-## 应用场景
+## 说明
 
-- **传感器数据处理**：温度、湿度、位置等传感器数据的平滑处理
-- **金融时间序列**：股票价格、汇率等金融数据的趋势分析
-- **运动跟踪**：鼠标轨迹、物体运动轨迹的平滑
-- **信号处理**：音频信号、生物信号等一维信号的去噪
+- 本库当前定位为一维轻量实现，不做多维状态泛化。
+- 方法命名均以规范好，例如 `get_filtered()`。
 
 ## TODO: 开发计划(作者给自己画饼)
 
-### 滤波器扩展
-后续版本将增加更多实用的滤波器算法：
-- **中值滤波器** (Median Filter) - 有效去除脉冲噪声
-- **巴特沃斯滤波器** (Butterworth Filter) - 频域滤波
-- **粒子滤波器** (Particle Filter) - 非线性非高斯系统
-- **无迹卡尔曼滤波器** (Unscented Kalman Filter) - 非线性系统
-- **扩展卡尔曼滤波器** (Extended Kalman Filter) - 非线性系统近似
-
 ### 卡尔曼滤波器升级
+
 当前 v1.0 版本为简单的一阶卡尔曼滤波器，后续将更新：
+
 - **多维卡尔曼滤波器** - 支持多状态变量
 - **自适应卡尔曼滤波器** - 动态调整噪声参数
 - **联邦卡尔曼滤波器** - 多传感器数据融合
-- **容积卡尔曼滤波器** (Cubature Kalman Filter) - 高精度非线性估计
+- **容积卡尔曼滤波器** - 高精度非线性估计
 
 ### 开发C++版本
 
@@ -186,15 +201,24 @@ KalmanFilter(x, A=1, B=None, H=1, Q=0.1, R=1, P=1)
 ## 版本历史
 
 - **v1.0** - 初始版本发布
+  
   - 实现三种基本滤波器
   - 提供完整的 API 文档和示例
+- **v1.1** - 新增11种滤波器
+  
+  - 实现基础平滑类、规则/融合类、状态估计与频域类共十四种常用滤波器
+  - 提供完整的 API 文档和示例
+  - 提供滤波器选型指导
+  - 图像显示三类滤波器的滤波效果
 
 ## 支持
 
 如果您在使用过程中遇到任何问题，可以通过以下方式联系：
+
 - 邮箱: 2099602919@qq.com
-- GitHub Issues: [项目 Issues 页面](https://github.com/LiO2-coder/MyFilter/issues)
+- GitHub Issues: [项目 Issues 页面](https://github.com/LiO2-coder/EasyFilter/issues)
 
 ---
 
-⭐ 第一次上传项目，如果这个项目对您有帮助，请给个Star！
+⭐ 第一个项目，如果这个项目对您有帮助，请给个Star！
+
