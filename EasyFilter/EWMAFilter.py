@@ -1,3 +1,4 @@
+import math
 from typing import Optional, Union
 
 
@@ -19,14 +20,23 @@ class EWMAFilter:
         self.filtered: Optional[float] = None
         self.set_alpha(alpha)
 
-    def set_alpha(self, alpha: float):
+    @staticmethod
+    def _validate_number(value: Number, name: str):
+        """
+        校验输入是否为有效数值
+        """
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"{name} 类型错误, 仅支持数值类型")
+        if not math.isfinite(float(value)):
+            raise ValueError(f"{name} 不能为 NaN 或 Inf")
+
+    def set_alpha(self, alpha: float) -> None:
         """
         设置平滑因子
 
         alpha: 平滑因子, 范围 [0, 1]
         """
-        if not isinstance(alpha, (int, float)) or isinstance(alpha, bool):
-            raise ValueError("alpha 类型错误, 仅支持数值类型")
+        self._validate_number(alpha, "alpha")
         if alpha < 0 or alpha > 1:
             raise ValueError("alpha 超出范围, 需满足 0 <= alpha <= 1")
         self.alpha = float(alpha)
@@ -37,8 +47,7 @@ class EWMAFilter:
 
         new_value: 新的测量值
         """
-        if not isinstance(new_value, (int, float)) or isinstance(new_value, bool):
-            raise ValueError("传入值类型错误, 仅支持数值类型")
+        self._validate_number(new_value, "new_value")
 
         value = float(new_value)
         if self.filtered is None:
@@ -53,7 +62,7 @@ class EWMAFilter:
         """
         return self.filtered
 
-    def reset(self, alpha: Optional[float] = None):
+    def reset(self, alpha: Optional[float] = None) -> None:
         """
         重置滤波器
 

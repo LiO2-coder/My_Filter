@@ -1,4 +1,5 @@
 from collections import deque
+import math
 from typing import Deque, Optional, Tuple, Union
 
 
@@ -25,14 +26,23 @@ class SWMFilter:
         self.window: Deque[float] = deque(maxlen=window_size)
         self.filtered: Optional[float] = None
 
+    @staticmethod
+    def _validate_number(value: Number, name: str):
+        """
+        校验输入是否为有效数值
+        """
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"{name} 类型错误, 仅支持数值类型")
+        if not math.isfinite(float(value)):
+            raise ValueError(f"{name} 不能为 NaN 或 Inf")
+
     def update(self, new_value: Number) -> Tuple[float, bool]:
         """
         使用新值更新滤波器
 
         new_value: 新的测量值
         """
-        if not isinstance(new_value, (int, float)) or isinstance(new_value, bool):
-            raise ValueError("传入值类型错误, 仅支持数值类型")
+        self._validate_number(new_value, "new_value")
 
         self.window.append(float(new_value))
         full_window = len(self.window) == self.window_size
@@ -50,7 +60,7 @@ class SWMFilter:
         """
         return self.filtered
 
-    def reset(self):
+    def reset(self) -> None:
         """
         重置滤波器
         """

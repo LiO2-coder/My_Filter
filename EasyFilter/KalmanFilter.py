@@ -1,3 +1,4 @@
+import math
 from typing import Optional, Union
 
 
@@ -65,6 +66,8 @@ class KalmanFilter:
     def _validate_number(value: Number, name: str):
         if not isinstance(value, (int, float)) or isinstance(value, bool):
             raise ValueError(f"{name} 类型错误, 仅支持数值类型")
+        if not math.isfinite(float(value)):
+            raise ValueError(f"{name} 不能为 NaN 或 Inf")
 
     def prior(self, u: Optional[Number] = None):
         """
@@ -93,7 +96,11 @@ class KalmanFilter:
         denominator = (self.H ** 2) * self.P_prior + self.R
         if denominator <= 0:
             raise RuntimeError("卡尔曼增益计算失败: 分母非正")
+        if not math.isfinite(denominator):
+            raise RuntimeError("卡尔曼增益计算失败: 分母不是有限数值")
         self.kalman_gain = numerator / denominator
+        if not math.isfinite(self.kalman_gain):
+            raise RuntimeError("卡尔曼增益计算失败: 增益不是有限数值")
 
     def posterior(self, z: Number):
         """
@@ -108,6 +115,10 @@ class KalmanFilter:
         innovation = float(z) - self.H * self.x_prior
         self.x_posterior = self.x_prior + self.kalman_gain * innovation
         self.P_posterior = self.P_prior - self.kalman_gain * self.H * self.P_prior
+        if self.P_posterior is None or not math.isfinite(self.P_posterior):
+            raise RuntimeError("后验估计失败: 协方差不是有限数值")
+        if self.P_posterior < 0:
+            raise RuntimeError("后验估计失败: 协方差为负值")
 
     def update(self, z: Number, u: Optional[Number] = None) -> float:
         """
@@ -122,6 +133,10 @@ class KalmanFilter:
 
         self.x = float(self.x_posterior)
         self.P = float(self.P_posterior)
+        if not math.isfinite(self.x):
+            raise RuntimeError("更新失败: 状态估计不是有限数值")
+        if self.P < 0:
+            raise RuntimeError("更新失败: 状态协方差为负值")
         return self.x
 
     def get_filtered(self) -> float:
@@ -160,7 +175,7 @@ class KalmanFilter:
         """
         return self.R
 
-    def reset(self, x: Optional[Number] = None, P: Optional[Number] = None):
+    def reset(self, x: Optional[Number] = None, P: Optional[Number] = None) -> None:
         """
         重置滤波器
 
