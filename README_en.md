@@ -196,8 +196,6 @@ This project is licensed under the MIT License.
 See [LICENSE](LICENSE) for details.
 
 ## Author
-
-- **LiO2** - [2099602919@qq.com](mailto:2099602919@qq.com)
 - **GitHub**: [https://github.com/LiO2-coder](https://github.com/LiO2-coder)
 
 ## Version History
@@ -214,8 +212,6 @@ See [LICENSE](LICENSE) for details.
 ## Support
 
 If you encounter any issue, contact via:
-
-- Email: 2099602919@qq.com
 - GitHub Issues: [https://github.com/LiO2-coder/EasyFilter/issues](https://github.com/LiO2-coder/EasyFilter/issues)
 
 ---
