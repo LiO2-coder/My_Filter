@@ -194,8 +194,6 @@ python3 examples/plot_filter_groups.py
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
 ## 作者
-
-- **LiO2** - [2099602919@qq.com](mailto:2099602919@qq.com)
 - **GitHub**: [https://github.com/LiO2-coder](https://github.com/LiO2-coder)
 
 ## 版本历史
@@ -214,8 +212,6 @@ python3 examples/plot_filter_groups.py
 ## 支持
 
 如果您在使用过程中遇到任何问题，可以通过以下方式联系：
-
-- 邮箱: 2099602919@qq.com
 - GitHub Issues: [项目 Issues 页面](https://github.com/LiO2-coder/EasyFilter/issues)
 
 ---
